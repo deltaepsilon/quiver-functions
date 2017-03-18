@@ -11,4 +11,4 @@ const login = new Login({
   usersPath: 'quiver-functions/users',
   adminUsers: ['chris@chrisesplin.com']
 });
-exports.login = functions.database.ref('/queues/login/{uid}').onWrite(login.getFunction());
+exports.login = functions.database.ref('quiver-functions/queues/current-user/{uid}').onWrite(login.getFunction());

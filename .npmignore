@@ -1,6 +1,5 @@
 .vscode
 public
-mocks
 spec
 *.spec.js
 config.json

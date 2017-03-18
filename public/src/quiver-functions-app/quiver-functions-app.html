@@ -20,6 +20,7 @@
 
 
 
+
       paper-material {
         padding: 1rem;
       }
@@ -104,15 +105,17 @@
           if (user) {
             this.displayName = user.displayName;
             this.photoURL = user.photoURL;
+            var userRef = firebase.database().ref(this.env.model.queues['current-user']).child(user.uid);
 
-            firebase.database()
-              .ref(this.env.model.queues['current-user'])
-              .child(user.uid)
-              .set({
-                email: user.email,
-                emailVerified: user.emailVerified,
-                photoURL: user.photoURL,
-                displayName: user.displayName
+            userRef.remove()
+              .then(function () {
+                return userRef.set({
+                  email: user.email,
+                  emailVerified: user.emailVerified,
+                  photoURL: user.photoURL,
+                  displayName: user.displayName,
+                  timestamp: new Date().toString()
+                });
               });
           }
         }.bind(this));

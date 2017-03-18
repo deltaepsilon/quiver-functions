@@ -12,11 +12,13 @@ describe('Login', function() {
 
   const db = admin.database();
 
-  const usersPath = 'quiver-functions/users';
+  const usersPath = 'quiver-functions/test/users';
   const usersRef = db.ref(usersPath);
-  const userRef = usersRef.child(mocks.mockUser.uid);
+  const uid = 'fake-uid'
+  const userRef = usersRef.child(uid);
 
-  const loginQueuePath = 'quiver-functions/queues/login';
+
+  const loginQueuePath = 'quiver-functions/test/queues/current-user';
   const loginQueueRef = db.ref(loginQueuePath);
 
   function cleanUp(done) {
@@ -31,10 +33,10 @@ describe('Login', function() {
       usersPath: usersPath,
       adminUsers: [mocks.mockUser.email]
     });
-    event = new mocks.MockDBEvent(usersRef, mocks.mockUser);
+    event = new mocks.MockDBEvent(loginQueueRef, {uid: uid}, mocks.mockUser);
   });
 
-  afterEach(cleanUp);
+  // afterEach(cleanUp);
 
   it('should process a user login queue item', (done) => {
     const loginFunction = login.getFunction();
@@ -42,7 +44,7 @@ describe('Login', function() {
     loginFunction(event).then(() => userRef.once('value')).then(snap => {
       const user = snap.val();
 
-      expect(user.uid).toEqual(mocks.mockUser.uid);
+      expect(snap.key).toEqual(uid);
       done();
     });
   });

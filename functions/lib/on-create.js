@@ -11,11 +11,16 @@ module.exports = class OnCreate {
       const functions = require('firebase-functions');
       const admin = require('firebase-admin');
       const config = functions.config();
-
-      admin.initializeApp({
+      const adminConfig = {
         databaseURL: config.firebase.databaseURL,
         credential: config.firebase.credential
-      }, 'onCreateApp');
+      };
+
+      try {
+        admin.initializeApp(adminConfig);
+      } catch (e) {
+        admin.initializeApp(adminConfig, 'loginApp');
+      }
 
       const userRef = admin.database().ref(this.usersPath).child(event.data.uid);
       const user = event.data;

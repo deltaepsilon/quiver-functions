@@ -1,12 +1,13 @@
 {
   "name": "quiver-functions",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "A monorepo of useful Firebase Cloud Functions",
   "scripts": {
     "test": "jasmine",
-    "install-functions": "cd functions && yarn install",
-    "install-public": "cd ./public && bower install",
-    "serve": "cd ./public && polymer serve"
+    "install-functions": "cd functions && npm install",
+    "install-public": "cd public && bower install",
+    "serve": "cd public && polymer serve",
+    "deploy": "firebase deploy --only functions"
   },
   "main": "index.js",
   "repository": "https://github.com/deltaepsilon/quiver-functions.git",

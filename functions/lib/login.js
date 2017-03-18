@@ -13,7 +13,9 @@ module.exports = class Login {
   getFunction() {
     return event => {
       const user = event.data.val();
-      const userRef = event.data.ref.root.child(this.usersPath).child(user.uid);
+      const userRef = event.data.adminRef.root.child(this.usersPath).child(event.params.uid);
+
+      if (!user) return Promise.resolve();
 
       user.lastLogin = Date.now();
 
@@ -21,7 +23,9 @@ module.exports = class Login {
         user.isAdmin = true;
       }
 
-      return userRef.update(user);
+      return userRef.update(user).then(() => {
+        return event.data.ref.remove();
+      });
     };
   }
 };

@@ -7,10 +7,7 @@ describe('Login', function() {
   const environmentUtility = new utilities.EnvironmentUtility(config.config.project, config.config.token, config);
 
   function cleanUp(done) {
-    environmentUtility.unsetAll().then((keys) => {
-      console.log('cleanup complete', keys);
-      done();
-    });
+    environmentUtility.unsetAll().then(done);
   }
 
   beforeEach(cleanUp);

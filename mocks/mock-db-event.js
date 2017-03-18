@@ -1,5 +1,5 @@
 module.exports = class MockAuthEvent {
-  constructor(ref, value) {
+  constructor(ref, params, value) {
     if (!ref) {
       throw 'ref required to initialize MockDBEvent';
     }
@@ -8,6 +8,9 @@ module.exports = class MockAuthEvent {
     }
 
     this.data = ref;
+    this.data.adminRef = ref;
+    
+    this.params = params;
 
     this.data.val = () => value;
   }
