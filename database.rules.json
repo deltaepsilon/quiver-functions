@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "quiver-functions": {
+      "queues": {
+        "current-user": {
+          "$uid": {
+            ".write": "auth.uid == $uid"
+          }
+        }
+      },
+      "users": {
+        "$uid": {
+          ".read": "auth.uid == $uid"
+        }
+      }
+    }
+  }
+}

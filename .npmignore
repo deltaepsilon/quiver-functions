@@ -1,0 +1,8 @@
+.vscode
+public
+mocks
+spec
+*.spec.js
+config.json
+firebase.json
+database.rules.json

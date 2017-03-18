@@ -1,0 +1,27 @@
+{
+  "firebase": {
+    "databaseURL": "https://quiver-two.firebaseio.com",
+    "storageBucket": "quiver-two.appspot.com",
+    "apiKey": "AIzaSyAgB7JVLSl-3TQGL-qvQ7mdSYjmpPNV7xQ",
+    "authDomain": "quiver-two.firebaseapp.com",
+    "serviceAccount": "/Users/quiver/.gcloud/quiver-two-service-account.json"
+  },
+  "config": {
+    "token": "1/ABCDEFG",
+    "project": "quiver-two"
+  },
+  "models": {
+    "queues": {
+      "current-user": "quiver-functions/queues/current-user"
+    }
+  },
+  "test-user": {
+    "uid": "fake-uid",
+    "email": "chris@quiver.is",
+    "password": "123456",
+    "display-name": "Chris Esplin",
+    "photo-url": "https://lh4.googleusercontent.com/-ly98tZeA6F0/AAAAAAAAAAI/AAAAAAAAADk/G-1n2ID9bOw/photo.jpg?sz=64",
+    "disabled": false,
+    "email-verified": false
+  }
+}

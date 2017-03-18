@@ -1,0 +1,24 @@
+{
+  "name": "quiver-functions",
+  "version": "1.0.0",
+  "description": "A monorepo of useful Firebase Cloud Functions",
+  "scripts": {
+    "test": "jasmine",
+    "install-functions": "cd functions && yarn install",
+    "install-public": "cd ./public && bower install",
+    "serve": "cd ./public && polymer serve"
+  },
+  "main": "index.js",
+  "repository": "https://github.com/deltaepsilon/quiver-functions.git",
+  "author": "Chris Esplin <chris@quiver.is>",
+  "license": "MIT",
+  "devDependencies": {
+    "firebase-functions": "^0.5.2",
+    "jasmine": "^2.5.3",
+    "nodemon": "^1.11.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^4.1.3",
+    "firebase-tools": "^3.5.0"
+  }
+}

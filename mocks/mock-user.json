@@ -1,0 +1,9 @@
+{
+  "uid": "fake-uid",
+  "email": "chris@chrisesplin.com",
+  "password": "123456",
+  "displayName": "Chris Esplin",
+  "photoURL": "https: //lh4.googleusercontent.com/-ly98tZeA6F0/AAAAAAAAAAI/AAAAAAAAADk/G-1n2ID9bOw/photo.jpg?sz=64",
+  "disabled": false,
+  "emailVerified": false
+}

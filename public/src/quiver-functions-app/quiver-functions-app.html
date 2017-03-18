@@ -1,0 +1,208 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>
+
+<dom-module id="quiver-functions-app">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+       :host {
+        display: block;
+        padding: 1rem;
+      }
+
+
+
+      paper-material {
+        padding: 1rem;
+      }
+    </style>
+
+    <iron-ajax id="env" auto url="/env.client.json" handle-as="json" last-response="{{env}}"></iron-ajax>
+
+
+    <h1>Quiver Functions Test Bed</h1>
+
+    <paper-material class="layout vertical" elevation="1">
+      <h3>Auth Triggers</h3>
+      <paper-input label="Email" value="{{email}}" type="text"></paper-input>
+      <paper-input label="Password" value="{{password}}" type="password"></paper-input>
+      <div class="layout horizontal">
+        <paper-button on-click="login">Login</paper-button>
+        <paper-button on-click="register">Register</paper-button>
+      </div>
+
+      <template is="dom-if" if="[[user]]">
+        <div ng-if="[[user]]">
+          <h3>Current User</h3>
+          <ul>
+            <li>user.uid: [[user.uid]]</li>
+            <li>user.email: [[user.email]]</li>
+            <li>user.displayName: [[user.displayName]]</li>
+            <li>user.photoURL: [[user.photoURL]]</li>
+            <li>user.emailVerified: [[user.emailVerified]]</li>
+          </ul>
+        </div>
+        <div class="layout vertical">
+          <paper-input label="displayName" value="{{displayName}}" type="text"></paper-input>
+          <paper-input label="photoURL" value="{{photoURL}}" type="text"></paper-input>
+        </div>
+        <div class="layout horizontal">
+          <paper-button on-click="verifyEmail" disabled$="[[!user]]">Verify Email</paper-button>
+          <paper-button on-click="logOut" disabled$="[[!user]]">Log Out</paper-button>
+          <paper-button on-click="updateUser" disabled$="[[!user]]">Update User</paper-button>
+        </div>
+      </template>
+
+
+    </paper-material>
+
+
+
+
+    <paper-toast id="toast"></paper-toast>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'quiver-functions-app',
+
+      properties: {
+        env: {
+          type: Object,
+          value: {}
+        },
+        firebase: {
+          type: Object,
+          computed: '_firebase(env.firebaseConfig)'
+        },
+        user: Object
+      },
+
+      // Observers
+      observers: [
+        '_onAuthStateChanged(firebase)',
+      ],
+
+      _firebase: function (firebaseConfig) {
+        if (firebaseConfig && !this.firebase) {
+          return firebase.initializeApp(firebaseConfig);
+        }
+      },
+
+      _onAuthStateChanged: function (firebase) {
+        firebase.auth().onAuthStateChanged(function (user) {
+          this.user = user;
+          if (user) {
+            this.displayName = user.displayName;
+            this.photoURL = user.photoURL;
+
+            firebase.database()
+              .ref(this.env.model.queues['current-user'])
+              .child(user.uid)
+              .set({
+                email: user.email,
+                emailVerified: user.emailVerified,
+                photoURL: user.photoURL,
+                displayName: user.displayName
+              });
+          }
+        }.bind(this));
+      },
+
+      // Listeners
+      listeners: {
+        alert: 'alert',
+        error: 'alert'
+      },
+
+      alert: function (e) {
+        var toast = this.$.toast;
+        toast.text = e.detail.toString();
+        toast.show();
+      },
+
+      // Functions
+      validateLoginInputs: function () {
+        var valid = true;
+        if (!this.email) {
+          this.fire('error', 'Email missing');
+          valid = false;
+        } else if (!this.password) {
+          this.fire('error', 'Password missing');
+          valid = false;
+        } else if (!this.firebase || !this.firebase.auth()) {
+          this.fire('error', 'Firebase not initialized');
+          valid = false;
+        }
+        return valid;
+      },
+
+      login: function () {
+        if (this.validateLoginInputs()) {
+          this.firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+            .catch(function (err) {
+              this.fire('error', err);
+            }.bind(this));
+        }
+      },
+
+      register: function () {
+        if (this.validateLoginInputs()) {
+          this.firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+            .catch(function (err) {
+              this.fire('error', err);
+            }.bind(this));
+        }
+      },
+
+      logOut: function () {
+        this.firebase.auth().signOut()
+          .catch(function (err) {
+            this.fire('error', err);
+          }.bind(this));;
+      },
+
+      verifyEmail: function () {
+        if (!this.user) {
+          this.fire('error', 'User missing');
+        } else {
+          this.firebase.auth().currentUser.sendEmailVerification()
+            .catch(function (err) {
+              this.fire('error', err);
+            }.bind(this));
+        }
+      },
+
+      updateUser: function () {
+        if (!this.user) {
+          this.fire('error', 'User missing');
+        } else {
+          this.firebase.auth().currentUser.updateProfile({
+            displayName: this.displayName,
+            photoURL: this.photoURL
+          })
+            .then(function () {
+              var user = this.firebase.auth().currentUser;
+              this.set('user', undefined);
+              this.set('user', user);
+              this.fire('alert', 'User update successful');
+            }.bind(this))
+            .catch(function (err) {
+              this.fire('error', err);
+            }.bind(this));
+        }
+      },
+
+
+    });
+  </script>
+</dom-module>

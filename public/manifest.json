@@ -1,0 +1,7 @@
+{
+  "name": "quiver-functions",
+  "short_name": "quiver-functions",
+  "description": "A test client for Quiver Functions",
+  "start_url": "/",
+  "display": "standalone"
+}
