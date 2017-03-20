@@ -79,7 +79,7 @@ exports.login = functions.database.ref('quiver-functions/queues/current-user/{ui
 
 ### Utilities
 
-***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it's just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```yourProject/functions/config.json```. There are three functions on ```EnvironmentUtility```:
+***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it'snp just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```yourProject/functions/config.json```. There are three functions on ```EnvironmentUtility```:
 
 1. ***EnvironmentUtility.getAll()***
 2. ***EnvironmentUtility.unsetAll()***
