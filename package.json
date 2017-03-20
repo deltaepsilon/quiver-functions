@@ -7,7 +7,8 @@
     "install-functions": "cd functions && npm install",
     "install-public": "cd public && bower install",
     "serve": "cd public && polymer serve",
-    "deploy": "firebase deploy --only functions"
+    "deploy": "firebase deploy --only functions",
+    "version-bump": "yarn version && git add . && git commit -m \"version bump\" && git push && yarn publish"
   },
   "main": "index.js",
   "repository": "https://github.com/deltaepsilon/quiver-functions.git",
