@@ -10,10 +10,10 @@ describe('Login', function() {
   const mocks = require('../../mocks/mocks');
   const OnCreate = require('./on-create');
 
-  const db = admin.database();
+  const database = admin.database();
 
   const usersPath = 'quiver-functions/users';
-  const usersRef = db.ref(usersPath);
+  const usersRef = database.ref(usersPath);
   const userRef = usersRef.child(mocks.mockUser.uid);
 
   function cleanUp(done) {
@@ -25,7 +25,8 @@ describe('Login', function() {
   let onCreate, event;
   beforeEach(() => {
     onCreate = new OnCreate({
-      usersPath: usersPath
+      usersPath: usersPath,
+      database
     });
     event = new mocks.MockAuthEvent(mocks.mockUser);
   });

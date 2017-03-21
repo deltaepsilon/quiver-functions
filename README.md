@@ -58,6 +58,10 @@ module.exports = {
 
 ```
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const config = functions.config();
+
+admin.initializeApp(config.firebase);
 
 const quiverFunctions = require('quiver-functions');
 const OnCreate = quiverFunctions.OnCreate;
@@ -65,7 +69,8 @@ const Login = quiverFunctions.Login;
 
 
 const onCreate = new OnCreate({
-  usersPath: 'quiver-functions/users'
+  usersPath: 'quiver-functions/users',
+  database: admin.database()
 });
 exports.onCreate = functions.auth.user().onCreate(onCreate.getFunction());
 

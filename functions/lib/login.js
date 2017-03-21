@@ -13,7 +13,7 @@ module.exports = class Login {
   getFunction() {
     return event => {
       const user = event.data.val();
-      const userRef = event.data.adminRef.root.child(this.usersPath).child(event.params.uid);
+      const userRef = event.data.adminRef.root.child(this.usersPath || '/some-garbage').child(event.params.uid || 'blerg-this-is-broken');
 
       if (!user) return Promise.resolve();
 

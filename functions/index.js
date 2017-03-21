@@ -1,8 +1,13 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const config = functions.config();
+
+admin.initializeApp(config.firebase);
 
 const OnCreate = require('./lib/on-create');
 const onCreate = new OnCreate({
-  usersPath: 'quiver-functions/users'
+  usersPath: 'quiver-functions/users',
+  database: admin.database()
 });
 exports.onCreate = functions.auth.user().onCreate(onCreate.getFunction());
 
