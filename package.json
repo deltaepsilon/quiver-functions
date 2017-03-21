@@ -1,6 +1,6 @@
 {
   "name": "quiver-functions",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "A monorepo of useful Firebase Cloud Functions",
   "scripts": {
     "test": "jasmine",
@@ -8,7 +8,7 @@
     "install-public": "cd public && bower install",
     "serve": "cd public && polymer serve",
     "deploy": "firebase deploy --only functions",
-    "version-bump": "yarn publish && git add . && git commit -m \"version bump\" && git push && git push --tags"
+    "version-bump": "yarn publish && git push && git push --tags"
   },
   "main": "index.js",
   "repository": "https://github.com/deltaepsilon/quiver-functions.git",
