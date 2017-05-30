@@ -41,3 +41,4 @@ jspm_packages
 bower_components
 env.client.json
 config.json
+.runtimeconfig.json

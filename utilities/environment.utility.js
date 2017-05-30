@@ -32,8 +32,9 @@ module.exports = class EnvironmentUtility {
 
       if (value && typeof value == 'object' && !Object.keys(value).length) {
         paths.push(`${keyPath}=undefined`);
-      } else if (value == 'true' || value == 'false') {
-        paths.push(`${keyPath}=${value}`);
+      } else if (typeof value == 'boolean') {
+        console.log(`Boolean forced to string: ${keyPath}='${value}'`);
+        paths.push(`${keyPath}='${value ? 'true' : 'false'}'`);
       } else if (typeof value == 'string') {
         paths.push(`${keyPath}='${value}'`);
       } else {
@@ -56,7 +57,9 @@ module.exports = class EnvironmentUtility {
       if (!pathsString) {
         return true;
       } else {
-        return firebaseTools.functions.config.unset(pathsString, this.firebaseToolsOptions).then(() => pathsString);
+        return Promise.all(filteredPaths.map(path => {
+          return firebaseTools.functions.config.unset([path], this.firebaseToolsOptions);
+        })).then(() => pathsString);
       }
     });
   }
@@ -66,7 +69,7 @@ module.exports = class EnvironmentUtility {
   setAll(incomingCommands) {
     const commands = incomingCommands || this.getConfigCommands(this.env);
     const cleanedCommands = this.getCleanCommands(commands);
-    return firebaseTools.functions.config.set(cleanedCommands, this.firebaseToolsOptions).then(() => cleanedCommands);
+    return firebaseTools.functions.config.set(cleanedCommands, this.firebaseToolsOptions).catch(err => Promise.reject({cleanedCommands, err})).then(() => cleanedCommands);
   }
 
   getCleanCommands(commands) {

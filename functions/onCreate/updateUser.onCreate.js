@@ -1,4 +1,4 @@
-module.exports = class OnCreate {
+module.exports = class UpdateUser {
   constructor(config) {
     if (!config.usersPath) {
       throw 'config.usersPath string missing. Looks like "/users"';
@@ -13,8 +13,6 @@ module.exports = class OnCreate {
   getFunction() {
     return event => {
       const functions = require('firebase-functions');
-    
-      const config = functions.config();
 
       const userRef = this.database.ref(this.usersPath).child(event.data.uid);
       const user = event.data;

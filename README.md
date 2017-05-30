@@ -37,16 +37,16 @@ QuiverFunctions export statement looks like this:
 
 ```
 module.exports = {
-  OnCreate: require('./functions/lib/on-create'),
-  Login: require('./functions/lib/login'),
+  UpdateUser: require('./functions/onCreate/updateUser.onCreate'),
+  Login: require('./functions/onWrite/login.onWrite'),
   mocks: require('./mocks/mocks'),
   utilities: require('./utilities/utilities')
 }
 ```
 
-### OnCreate
+### UpdateUser
 
-***OnCreate*** is a simple handler for user-creation events. It simply copies the new user's JWT data to whatever collection you specify with the ```usersPath``` parameter.
+***UpdateUser*** is a simple handler for user-creation events. It simply copies the new user's JWT data to whatever collection you specify with the ```usersPath``` parameter.
 
 ### Login
 
@@ -64,15 +64,15 @@ const config = functions.config();
 admin.initializeApp(config.firebase);
 
 const quiverFunctions = require('quiver-functions');
-const OnCreate = quiverFunctions.OnCreate;
+const UpdateUser = quiverFunctions.UpdateUser;
 const Login = quiverFunctions.Login;
 
 
-const onCreate = new OnCreate({
+const updateUser = new UpdateUser({
   usersPath: 'quiver-functions/users',
   database: admin.database()
 });
-exports.onCreate = functions.auth.user().onCreate(onCreate.getFunction());
+exports.updateUser = functions.auth.user().onCreate(updateUser.getFunction());
 
 const login = new Login({
   usersPath: 'quiver-functions/users',

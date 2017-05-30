@@ -4,16 +4,20 @@ const config = functions.config();
 
 admin.initializeApp(config.firebase);
 
-const OnCreate = require('./lib/on-create');
-const onCreate = new OnCreate({
+const UpdateUser = require('./onCreate/updateUser.onCreate');
+const updateUser = new UpdateUser({
   usersPath: 'quiver-functions/users',
   database: admin.database()
 });
-exports.onCreate = functions.auth.user().onCreate(onCreate.getFunction());
+exports.updateUser = functions.auth.user().onCreate(updateUser.getFunction());
 
-const Login = require('./lib/login');
+const Login = require('./onWrite/login.onWrite');
 const login = new Login({
   usersPath: 'quiver-functions/users',
   adminUsers: ['chris@chrisesplin.com']
 });
 exports.login = functions.database.ref('quiver-functions/queues/current-user/{uid}').onWrite(login.getFunction());
+
+const Environment = require('./onRequest/environment.onRequest');
+const environment = new Environment();
+exports.environment = functions.https.onRequest(environment.getFunction());

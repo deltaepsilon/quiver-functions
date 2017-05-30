@@ -1,13 +1,15 @@
 const _ = require('lodash');
 
-describe('Login', function() {
-  const config = require('../functions/config.json');
+describe('EnvironmentUtility', function() {
+  const config = require('../functions/.runtimeconfig.json');
 
   const utilities = require('./utilities');
   const environmentUtility = new utilities.EnvironmentUtility(config.config.project, config.config.token, config);
 
   function cleanUp(done) {
-    environmentUtility.unsetAll().then(done);
+    environmentUtility.unsetAll().then(done).catch(error => {
+      console.log(error)
+    });
   }
 
   beforeEach(cleanUp);

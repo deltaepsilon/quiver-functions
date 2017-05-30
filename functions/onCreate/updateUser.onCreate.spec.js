@@ -1,14 +1,14 @@
 describe('Login', function() {
   const admin = require('firebase-admin');
-  const config = require('../config.json');
+  const config = require('../.runtimeconfig.json');
 
   admin.initializeApp({
     credential: admin.credential.cert(config.firebase.serviceAccount),
     databaseURL: config.firebase.databaseURL
-  }, 'onCreateSpecApp');
+  });
 
   const mocks = require('../../mocks/mocks');
-  const OnCreate = require('./on-create');
+  const UpdateUser = require('./updateUser.onCreate');
 
   const database = admin.database();
 
@@ -22,9 +22,9 @@ describe('Login', function() {
 
   beforeEach(cleanUp);
 
-  let onCreate, event;
+  let updateUser, event;
   beforeEach(() => {
-    onCreate = new OnCreate({
+    updateUser = new UpdateUser({
       usersPath: usersPath,
       database
     });
@@ -33,10 +33,10 @@ describe('Login', function() {
 
   afterEach(cleanUp);
 
-  it('should process auth onCreate', (done) => {
-    const onCreateFunction = onCreate.getFunction();
+  it('should process auth updateUser', (done) => {
+    const updateUserFunction = updateUser.getFunction();
 
-    onCreateFunction(event).then(() => userRef.once('value')).then(snap => {
+    updateUserFunction(event).then(() => userRef.once('value')).then(snap => {
       const user = snap.val();
 
       expect(user.uid).toEqual(mocks.mockUser.uid);

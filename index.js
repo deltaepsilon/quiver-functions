@@ -1,6 +1,6 @@
 module.exports = {
-  OnCreate: require('./functions/lib/on-create'),
-  Login: require('./functions/lib/login'),
+  UpdateUser: require('./functions/onCreate/updateUser.onCreate'),
+  Login: require('./functions/onWrite/login.onWrite'),
   mocks: require('./mocks/mocks'),
   utilities: require('./utilities/utilities')
 }

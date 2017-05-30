@@ -7,15 +7,10 @@
     "serviceAccount": "/Users/quiver/.gcloud/quiver-two-service-account.json"
   },
   "config": {
-    "token": "1/ABCDEFG",
+    "token": "1/oCzz-eMX9Sdqx0ImNIOhOajhvOjSKATeccBuU9WpMxc",
     "project": "quiver-two"
   },
-  "models": {
-    "queues": {
-      "current-user": "quiver-functions/queues/current-user"
-    }
-  },
-  "test-user": {
+  "test_user": {
     "uid": "fake-uid",
     "email": "chris@quiver.is",
     "password": "123456",
@@ -23,5 +18,31 @@
     "photo-url": "https://lh4.googleusercontent.com/-ly98tZeA6F0/AAAAAAAAAAI/AAAAAAAAADk/G-1n2ID9bOw/photo.jpg?sz=64",
     "disabled": false,
     "email-verified": false
+  },
+  "public": {
+    "a": "defaults: a",
+    "localhost": {
+      "a": "localhost: a",
+      "b": "localhost: b"
+    },
+    "subdomain:domain:tld": {
+      "a": "subdomain:domain:tld: a",
+      "b": "subdomain:domain:tld: b"
+    }
+  },
+  "shared": {
+    "models": {
+      "queues": {
+        "current-user": "quiver-functions/queues/current-user"
+      }
+    }
+  },
+  "test_public": {
+    "c": "test_public: c",
+    "d": "test_public: d"
+  },
+  "test_shared": {
+    "e": "test_shared: e",
+    "f": "test_shared: f"
   }
 }

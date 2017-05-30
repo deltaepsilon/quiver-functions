@@ -6,6 +6,10 @@
     "public": "public",
     "rewrites": [
       {
+        "source": "/environment",
+        "function": "environment"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

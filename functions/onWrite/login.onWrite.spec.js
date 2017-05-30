@@ -1,6 +1,6 @@
 describe('Login', function() {
   const admin = require('firebase-admin');
-  const config = require('../config.json');
+  const config = require('../.runtimeconfig.json');
 
   admin.initializeApp({
     credential: admin.credential.cert(config.firebase.serviceAccount),
@@ -8,7 +8,7 @@ describe('Login', function() {
   });
 
   const mocks = require('../../mocks/mocks');
-  const Login = require('./login');
+  const Login = require('./login.onWrite');
 
   const db = admin.database();
 
