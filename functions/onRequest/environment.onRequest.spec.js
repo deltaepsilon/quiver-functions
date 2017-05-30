@@ -62,13 +62,6 @@ describe('Environment', () => {
         const env = extractEnv(res);
         expect(env['test_public'].c).toEqual('test_public: c');
       });
-
-      it('shared', () => {
-        func(req, res);
-
-        const env = extractEnv(res);
-        expect(env['test_shared'].e).toEqual('test_shared: e');
-      });
     });
   });
 

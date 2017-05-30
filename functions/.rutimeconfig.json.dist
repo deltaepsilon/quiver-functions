@@ -21,6 +21,11 @@
   },
   "public": {
     "a": "defaults: a",
+    "models": {
+      "queues": {
+        "current-user": "quiver-functions/queues/current-user"
+      }
+    },
     "localhost": {
       "a": "localhost: a",
       "b": "localhost: b"
@@ -28,13 +33,6 @@
     "subdomain:domain:tld": {
       "a": "subdomain:domain:tld: a",
       "b": "subdomain:domain:tld: b"
-    }
-  },
-  "shared": {
-    "models": {
-      "queues": {
-        "current-user": "quiver-functions/queues/current-user"
-      }
     }
   },
   "test_public": {

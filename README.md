@@ -54,7 +54,86 @@ module.exports = {
 
 ***Login*** requires ```{uid}``` to be in the ref path. It's a generic solution, I know, but every app I've written in the last year has used this functionality, written exactly like this.
 
-#### Example
+### EnvironmentService
+
+***EnvironmentService*** takes environment config and has a utility method called ```getPublicEnvironment(host)``` that will return just the ```.public``` node of your environment as well as complete any overrides based on the ```host``` that you pass in. Note that keys can't have periods in them so we're using ```:``` instead of dots. Here's a quick example:
+
+```
+"public": {
+  "a": "defaults: a",
+  "models": {
+    "queues": {
+      "current-user": "quiver-functions/queues/current-user"
+    }
+  },
+  "localhost": {
+    "a": "localhost: a",
+    "b": "localhost: b"
+  },
+  "subdomain:domain:tld": {
+    "a": "subdomain:domain:tld: a",
+    "b": "subdomain:domain:tld: b"
+  }
+}
+```
+
+***public*** and ***domain-specific overrides***
+
+I always find myself wanting some of my environment variables to be public so that I can quickly pass them to my client apps. I also want to be able to override these public variables based on domain. I use different domains for dev, test and prod, so I should be able to easily override my public environment variables.
+
+
+Check out ```./functions/runtimeconfig.json.dist``` for a complete example. 
+
+### Environment Variable Rules
+
+Functions has some rules for environment variables/config.
+ 
+ - No root-level key can have the word "firebase" in it. There is a ```firebase: {}``` attribute that will be filled in automatically by Functions, so you won't have to look far for your core environment variables. Also, it doesn't hurt to keep your own ```firebase: {}``` attributes in ```.runtimeconfig.json```; just know that this attribute will be deleted upon upload.
+ - All config must be nested. You can't do ```{ someValue: 'true' }```. It needs to be ```{some: { value: 'true }}```.
+ - Dashes and special characters in attribute names can wreck havoc. So can capitalization. Attribute names should be all lowercase and have no special characters. Underscores are preferred. So don't use ```{'test-user': {...}}```. Use ```{test_user: {...}}``` instead.
+
+
+### Environment onRequest Handler***
+
+The ***Environment*** onRequest handler is a bit fancy. It takes advantage of the fact that ```firebase-functions``` looks for environment variables in ```./functions/.runtimeconfig.json```. 
+
+First, place all of your environment variables in that .json file, and use ```./utilities/environment.utility.js``` and it's ```setAll()```, ```unsetAll()``` and ```getAll()``` functions to push those environment variables up to Functions config. Now your local environment and your Functions environment will be equivalent.
+
+Second, export an ```environment``` function in your ```./functions/index.js```. Here's an example:
+
+```
+const Environment = require('quiver-functions').Environment;
+const environment = new Environment();
+exports.environment = functions.https.onRequest(environment.getFunction());
+```
+
+Third, create a rewrite rule in your ```./firebase.json```. Here's what I'm using for ```firebase.json```. Notice that the ***source*** is ```/environment```, but there's no ***destination***... only a ***function***. That ***function*** value matches up to the ```exports.environment = ...``` line in the example above.
+
+```
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "/environment",
+        "function": "environment"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+
+```
+
+Now that you've completed the redirect, run ```firebase deploy``` in your terminal and hit [https://your-firebase.firebaseapp.com/environment](https://your-firebase.firebaseapp.com/environment) to see the magic. It's a single script tag that adds your public environment to ```window.firebaseEnv```. This is perfect for importing your client-side environment variables into your dev, test and prod clients.
+
+#### Full Example
 
 ```
 const functions = require('firebase-functions');
@@ -63,28 +142,29 @@ const config = functions.config();
 
 admin.initializeApp(config.firebase);
 
-const quiverFunctions = require('quiver-functions');
-const UpdateUser = quiverFunctions.UpdateUser;
-const Login = quiverFunctions.Login;
-
-
+const UpdateUser = require('quiver-functions').UpdateUser;
 const updateUser = new UpdateUser({
   usersPath: 'quiver-functions/users',
   database: admin.database()
 });
 exports.updateUser = functions.auth.user().onCreate(updateUser.getFunction());
 
+const Login = require('quiver-functions').Login;
 const login = new Login({
   usersPath: 'quiver-functions/users',
   adminUsers: ['chris@chrisesplin.com']
 });
 exports.login = functions.database.ref('quiver-functions/queues/current-user/{uid}').onWrite(login.getFunction());
 
+const Environment = require('quiver-functions').Environment;
+const environment = new Environment();
+exports.environment = functions.https.onRequest(environment.getFunction());
+
 ```
 
 ### Utilities
 
-***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it'snp just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```yourProject/functions/config.json```. There are three functions on ```EnvironmentUtility```:
+***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it's just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```yourProject/functions/config.json```. There are three functions on ```EnvironmentUtility```:
 
 1. ***EnvironmentUtility.getAll()***
 2. ***EnvironmentUtility.unsetAll()***
@@ -115,5 +195,18 @@ environmentUtility.unsetAll()
 ***QuiverFunctions.mocks*** is a collection of useful mocks for testing Firebase Functions locally. See the code in ```/mocks``` to see how the objects are built. Check out ```/functions/lib/login.spec.js``` and ```/functions/lib/on-create.spec.js``` for example implementation.
 
 Developing Firebase Functions without a local testing environment is... a mistake. A huge mistake. It's basically impossible to develop effectively with a guess-and-check technique. Every call of ```firebase deploy --only functions``` takes at least a minute, and then the functions can take a while to warm up, so solving bugs by uploading new "fixed" functions can be a huge waste of time. Just write the tests. You'll be happier. Promise.
+
+### QVF
+
+I found myself wanting to fire off the ***EnvironmentUtility*** functions directly from the command line, so I wrote a tiny CLI that's available with the command ```qvf``` for quiver-functions. It has three potential commands, and one flag. Here's the full example:
+
+```
+$ qvf unset
+$ qvf get
+$ qvf set
+$ qvf set --environment some/other/environment.json
+```
+
+Note that ```qvf set``` defaults to using ```$PWD/functions/.runtimeconfig.json```.
 
 

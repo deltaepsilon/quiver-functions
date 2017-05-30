@@ -2,7 +2,6 @@ module.exports = class EnvironmentService {
   constructor(settings = {}) {
     this.config = settings.config;
     this.public = settings.public || 'public';
-    this.shared = settings.shared || 'shared';
   }
 
   getEnvironment() {
@@ -20,7 +19,6 @@ module.exports = class EnvironmentService {
     const publicEnvironment = {
       firebase: config.firebase,
       [this.public]: config[this.public],
-      [this.shared]: config[this.shared],
     };
 
     if (publicEnvironment[this.public] && publicEnvironment[this.public][host]) {
