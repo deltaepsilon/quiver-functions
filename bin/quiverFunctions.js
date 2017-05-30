@@ -2,7 +2,7 @@
 const path = require('path');
 const argv = require('yargs').argv;
 const cwd = path.resolve(process.cwd());
-const env = require(`${cwd}/${argv.environment || 'functions/.runtimeconfig.json'}`);
+const env = require(`${cwd}/${argv.environment || 'functions/config.json'}`);
 const EnvironmentUtility = require('../utilities/utilities').EnvironmentUtility;
 const environmentUtility = new EnvironmentUtility(env.config.project, env.config.token, env);
 

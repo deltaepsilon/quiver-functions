@@ -83,20 +83,20 @@ module.exports = {
 I always find myself wanting some of my environment variables to be public so that I can quickly pass them to my client apps. I also want to be able to override these public variables based on domain. I use different domains for dev, test and prod, so I should be able to easily override my public environment variables.
 
 
-Check out ```./functions/.runtimeconfig.json.dist``` for a complete example. 
+Check out ```./functions/config.json.dist``` for a complete example. 
 
 ### Environment Variable Rules
 
 Functions has some rules for environment variables/config.
  
- - No root-level key can have the word "firebase" in it. There is a ```firebase: {}``` attribute that will be filled in automatically by Functions, so you won't have to look far for your core environment variables. Also, it doesn't hurt to keep your own ```firebase: {}``` attributes in ```.runtimeconfig.json```; just know that this attribute will be deleted upon upload.
+ - No root-level key can have the word "firebase" in it. There is a ```firebase: {}``` attribute that will be filled in automatically by Functions, so you won't have to look far for your core environment variables. Also, it doesn't hurt to keep your own ```firebase: {}``` attributes in ```config.json```; just know that this attribute will be deleted upon upload.
  - All config must be nested. You can't do ```{ someValue: 'true' }```. It needs to be ```{some: { value: 'true' }}```.
  - Dashes and special characters in attribute names can wreck havoc. So can capitalization. Attribute names should be all lowercase and have no special characters. Underscores are preferred. So don't use ```{'test-user': {...}}```. Use ```{test_user: {...}}``` instead.
 
 
 ### Environment onRequest Handler
 
-The ***Environment*** onRequest handler is a bit fancy. It takes advantage of the fact that ```firebase-functions``` looks for environment variables in ```./functions/.runtimeconfig.json```. 
+The ***Environment*** onRequest handler is a bit fancy. It takes advantage of the fact that ```firebase-functions``` looks for environment variables in ```./functions/config.json```. 
 
 First, place all of your environment variables in that .json file, and use ```./utilities/environment.utility.js``` and it's ```setAll()```, ```unsetAll()``` and ```getAll()``` functions to push those environment variables up to Functions config. Now your local environment and your Functions environment will be equivalent.
 
@@ -165,7 +165,7 @@ exports.environment = functions.https.onRequest(environment.getFunction());
 
 ### Utilities
 
-***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it's just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```./functions/.runtimeconfig.json```. There are three functions on ```EnvironmentUtility```:
+***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it's just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```./functions/config.json```. There are three functions on ```EnvironmentUtility```:
 
 1. ***EnvironmentUtility.getAll()***
 2. ***EnvironmentUtility.unsetAll()***
@@ -208,6 +208,6 @@ $ qvf set
 $ qvf set --environment some/other/environment.json
 ```
 
-Note that ```qvf set``` defaults to using ```$PWD/functions/.runtimeconfig.json```.
+Note that ```qvf set``` defaults to using ```$PWD/functions/config.json```.
 
 

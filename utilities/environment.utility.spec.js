@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 describe('EnvironmentUtility', function() {
-  const config = require('../functions/.runtimeconfig.json');
+  const config = require('../functions/config.json');
 
   const utilities = require('./utilities');
   const environmentUtility = new utilities.EnvironmentUtility(config.config.project, config.config.token, config);

@@ -1,5 +1,6 @@
 const Environment = require('./environment.onRequest');
-const environment = new Environment();
+const config = require('../config.json');
+const environment = new Environment({ config });
 const httpMocks = require('node-mocks-http');
 
 describe('Environment', () => {
@@ -18,7 +19,7 @@ describe('Environment', () => {
   });
 
   it('should allow overriding config', () => {
-    const config = { firebase: 1, public: 2, shared: 3 };
+    const config = { firebase: 1, public: 2 };
     const testEnvironment = new Environment({ config });
     func = testEnvironment.getFunction();
 
@@ -33,7 +34,7 @@ describe('Environment', () => {
       func(req, res);
 
       const env = extractEnv(res);
-      expect(Object.keys(env)).toEqual(['firebase', 'public', 'shared']);
+      expect(Object.keys(env)).toEqual(['firebase', 'public']);
     });
 
     it('does not serve config.credentials', () => {
@@ -52,7 +53,7 @@ describe('Environment', () => {
 
     describe('Alternate paths', () => {
       beforeEach(() => {
-        const testEnvironment = new Environment({ public: 'test_public', shared: 'test_shared' });
+        const testEnvironment = new Environment({ config, public: 'test_public', shared: 'test_shared' });
         func = testEnvironment.getFunction();
       });
 
@@ -68,7 +69,7 @@ describe('Environment', () => {
   describe('handles defaults', () => {
     it('starts with defaults', () => {
       func(req, res);
-      
+
       const env = extractEnv(res);
       expect(env.public.a).toEqual('defaults: a');
     });

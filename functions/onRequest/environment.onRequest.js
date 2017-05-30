@@ -9,8 +9,7 @@ module.exports = class Environment {
 
   getFunction() {
     return (req, res) => {
-      const functions = require('firebase-functions');
-      const config = this.config || functions.config();
+      const config = this.config;
       const environmentService = new EnvironmentService({ config, public: this.public, shared: this.shared });
       const publicEnvironment = environmentService.getPublicEnvironment(req.host);
 

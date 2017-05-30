@@ -1456,7 +1456,7 @@ find-up@^2.0.0, find-up@^2.1.0:
 
 firebase-admin@^5.0.0:
   version "5.0.0"
-  resolved "https://npm.chrisesplin.com/firebase-admin/-/firebase-admin-5.0.0.tgz#fadae56c99be4fb56c781007d6719d153fe8fd7b"
+  resolved "https://registry.npmjs.org/firebase-admin/-/firebase-admin-5.0.0.tgz#fadae56c99be4fb56c781007d6719d153fe8fd7b"
   dependencies:
     "@types/jsonwebtoken" "^7.1.33"
     faye-websocket "0.9.3"
@@ -1465,7 +1465,7 @@ firebase-admin@^5.0.0:
 
 firebase-functions@^0.5.7:
   version "0.5.7"
-  resolved "https://npm.chrisesplin.com/firebase-functions/-/firebase-functions-0.5.7.tgz#e0310817a2aac3a657f1802b32949c2749c0ee22"
+  resolved "https://registry.npmjs.org/firebase-functions/-/firebase-functions-0.5.7.tgz#e0310817a2aac3a657f1802b32949c2749c0ee22"
   dependencies:
     "@types/express" "^4.0.33"
     "@types/jsonwebtoken" "^7.1.32"

@@ -5,7 +5,7 @@ module.exports = class EnvironmentService {
   }
 
   getEnvironment() {
-    return require('../.runtimeconfig.json');
+    return require('../config.json');
   }
 
   getPublicEnvironment(dirtyHost) {
