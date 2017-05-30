@@ -17,7 +17,7 @@ You'll find yourself implenting a lot of the same things over, and over and over
 - Edit ```./functions/config.json``` with your test project's details including the CI token. Let ```./functions/config.json.dist``` be your guide.
 - ```cd quiver-functions```
 - ```npm install```
-- ```cd ..``
+- ```cd ..```
 - ```npm test```
 
 ### Test bed web page
@@ -39,6 +39,7 @@ QuiverFunctions export statement looks like this:
 module.exports = {
   UpdateUser: require('./functions/onCreate/updateUser.onCreate'),
   Login: require('./functions/onWrite/login.onWrite'),
+  Environment: require('./functions/onRequest/environment.onRequest'),
   mocks: require('./mocks/mocks'),
   utilities: require('./utilities/utilities')
 }
@@ -82,18 +83,18 @@ module.exports = {
 I always find myself wanting some of my environment variables to be public so that I can quickly pass them to my client apps. I also want to be able to override these public variables based on domain. I use different domains for dev, test and prod, so I should be able to easily override my public environment variables.
 
 
-Check out ```./functions/runtimeconfig.json.dist``` for a complete example. 
+Check out ```./functions/.runtimeconfig.json.dist``` for a complete example. 
 
 ### Environment Variable Rules
 
 Functions has some rules for environment variables/config.
  
  - No root-level key can have the word "firebase" in it. There is a ```firebase: {}``` attribute that will be filled in automatically by Functions, so you won't have to look far for your core environment variables. Also, it doesn't hurt to keep your own ```firebase: {}``` attributes in ```.runtimeconfig.json```; just know that this attribute will be deleted upon upload.
- - All config must be nested. You can't do ```{ someValue: 'true' }```. It needs to be ```{some: { value: 'true }}```.
+ - All config must be nested. You can't do ```{ someValue: 'true' }```. It needs to be ```{some: { value: 'true' }}```.
  - Dashes and special characters in attribute names can wreck havoc. So can capitalization. Attribute names should be all lowercase and have no special characters. Underscores are preferred. So don't use ```{'test-user': {...}}```. Use ```{test_user: {...}}``` instead.
 
 
-### Environment onRequest Handler***
+### Environment onRequest Handler
 
 The ***Environment*** onRequest handler is a bit fancy. It takes advantage of the fact that ```firebase-functions``` looks for environment variables in ```./functions/.runtimeconfig.json```. 
 
@@ -164,7 +165,7 @@ exports.environment = functions.https.onRequest(environment.getFunction());
 
 ### Utilities
 
-***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it's just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```yourProject/functions/config.json```. There are three functions on ```EnvironmentUtility```:
+***QuiverFunctions.utilities*** is a collection of useful little helpers. So far it's just ```utililities.EnvironmentUtility```, which manipulates Firebase Functions config as found in ```./functions/.runtimeconfig.json```. There are three functions on ```EnvironmentUtility```:
 
 1. ***EnvironmentUtility.getAll()***
 2. ***EnvironmentUtility.unsetAll()***
@@ -184,7 +185,7 @@ environmentUtility.unsetAll()
   .then(() => {
     return environmentUtility.getAll();
   })
-  .then((newConfig) => {
+  .then(newConfig => {
     console.log('New Firebase Functions config: ', newConfig);
   });
 
@@ -194,11 +195,11 @@ environmentUtility.unsetAll()
 
 ***QuiverFunctions.mocks*** is a collection of useful mocks for testing Firebase Functions locally. See the code in ```/mocks``` to see how the objects are built. Check out ```/functions/lib/login.spec.js``` and ```/functions/lib/on-create.spec.js``` for example implementation.
 
-Developing Firebase Functions without a local testing environment is... a mistake. A huge mistake. It's basically impossible to develop effectively with a guess-and-check technique. Every call of ```firebase deploy --only functions``` takes at least a minute, and then the functions can take a while to warm up, so solving bugs by uploading new "fixed" functions can be a huge waste of time. Just write the tests. You'll be happier. Promise.
+Developing Firebase Functions without a local testing environment is... a mistake. A huge mistake. It's basically impossible to develop effectively with a guess-and-check technique. Every call to ```firebase deploy --only functions``` takes at least a minute, and then the functions can take a while to warm up, so solving bugs by uploading new "fixed" functions can be a huge waste of time. Just write the tests. You'll be happier. Promise.
 
 ### QVF
 
-I found myself wanting to fire off the ***EnvironmentUtility*** functions directly from the command line, so I wrote a tiny CLI that's available with the command ```qvf``` for quiver-functions. It has three potential commands, and one flag. Here's the full example:
+I found myself wanting to fire off the ***EnvironmentUtility*** functions directly from the command line, so I wrote a tiny CLI that's available with the command ```qvf``` (for quiver-functions). It has three commands and one flag. Here's the full example:
 
 ```
 $ qvf unset
