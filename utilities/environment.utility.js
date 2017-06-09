@@ -33,10 +33,10 @@ module.exports = class EnvironmentUtility {
       if (value && typeof value == 'object' && !Object.keys(value).length) {
         paths.push(`${keyPath}=undefined`);
       } else if (typeof value == 'boolean') {
-        console.log(`Boolean forced to string: ${keyPath}='${value}'`);
+        console.log(`Boolean forced to string: ${keyPath}=${value ? 'true' : 'false'}`);
         paths.push(`${keyPath}='${value ? 'true' : 'false'}'`);
       } else if (typeof value == 'string') {
-        paths.push(`${keyPath}='${value}'`);
+        paths.push(`${keyPath}=${value}`);
       } else {
         paths = paths.concat(this.getConfigCommands(value, path.concat(key)));
       }
@@ -57,6 +57,8 @@ module.exports = class EnvironmentUtility {
       if (!pathsString) {
         return true;
       } else {
+        console.log('config', JSON.stringify(config));
+        // console.log('filteredPaths', filteredPaths);
         return Promise.all(filteredPaths.map(path => {
           return firebaseTools.functions.config.unset([path], this.firebaseToolsOptions);
         })).then(() => pathsString);

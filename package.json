@@ -3,15 +3,14 @@
   "version": "1.0.16",
   "description": "A monorepo of useful Firebase Cloud Functions",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "jest --config=jest.config.json",
+    "test:watch": "jest --watch --config=jest.config.json",
     "install-functions": "cd functions && yarn install",
     "install-public": "cd public && bower install",
     "serve": "cd public && polymer serve",
     "deploy": "firebase deploy",
     "deploy:functions": "firebase deploy --only functions",
-    "deploy:hosting": "firebase deploy --only hosting",
-    "version-bump": "yarn publish && git push && git push --tags"
+    "deploy:hosting": "firebase deploy --only hosting"
   },
   "main": "index.js",
   "repository": "https://github.com/deltaepsilon/quiver-functions.git",
