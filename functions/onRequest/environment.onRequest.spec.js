@@ -91,6 +91,21 @@ describe('Environment', () => {
     });
   });
 
+  describe('Headers', () => {
+    it('sets headers', () => {
+      const config = { firebase: 1, public: 2 };
+      const headers = {
+        'Cache-Control': 'public, max-age=123'
+      };
+      const testEnvironment = new Environment({ config, headers });
+      func = testEnvironment.getFunction();
+
+      func(req, res);
+
+      expect(res.header('Cache-Control')).toEqual(headers['Cache-Control']);
+    });
+  });
+
   function extractEnv(res) {
     const response = res._getData();
     const json = response.match(/{.+}/)[0];

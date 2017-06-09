@@ -157,8 +157,12 @@ const login = new Login({
 });
 exports.login = functions.database.ref('quiver-functions/queues/current-user/{uid}').onWrite(login.getFunction());
 
+const config = functions.config();
+const headers = {
+  'Cache-Control': 'public, max-age=600, s-maxage=600'
+};
 const Environment = require('quiver-functions').Environment;
-const environment = new Environment();
+const environment = new Environment({ config, headers });
 exports.environment = functions.https.onRequest(environment.getFunction());
 
 ```

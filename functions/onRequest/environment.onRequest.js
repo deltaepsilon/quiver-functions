@@ -5,6 +5,7 @@ module.exports = class Environment {
     this.public = settings.public || 'public';
     this.shared = settings.shared || 'shared';
     this.config = settings.config;
+    this.headers = settings.headers || {};
   }
 
   getFunction() {
@@ -13,11 +14,10 @@ module.exports = class Environment {
       const environmentService = new EnvironmentService({ config, public: this.public, shared: this.shared });
       const publicEnvironment = environmentService.getPublicEnvironment(req.host);
 
-      res.status(200).send(`
-        <script>
-          window.firebaseEnv = ${JSON.stringify(publicEnvironment)}
-        </script>
-      `);
+      for (let header in this.headers) {
+        res.set(header, this.headers[header]);
+      }
+      res.status(200).send(`window.firebaseEnv = ${JSON.stringify(publicEnvironment)}`);
     };
   }
 };

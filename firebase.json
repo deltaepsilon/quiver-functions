@@ -6,7 +6,7 @@
     "public": "public",
     "rewrites": [
       {
-        "source": "/environment",
+        "source": "/environment.js",
         "function": "environment"
       },
       {
