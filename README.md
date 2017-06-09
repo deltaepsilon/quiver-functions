@@ -119,7 +119,7 @@ Third, create a rewrite rule in your ```./firebase.json```. Here's what I'm usin
     "public": "public",
     "rewrites": [
       {
-        "source": "/environment",
+        "source": "/environment.js",
         "function": "environment"
       },
       {
