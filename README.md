@@ -51,7 +51,7 @@ module.exports = {
 
 ### Login
 
-***Login*** is designed so that every time your user logs in, he'll add his JWT data to a queue, and ***Login*** will process that queue item, checking to see if the email is in the ```adminUsers``` array and adding the ```user.isAdmin``` flag as appropriate. The user details are then updated to ```usersPath/{uid}``` based on the specified ```usersPath``` param.
+***Login*** is designed so that every time your user logs in, he'll add his token from ```firebase.auth().currentUser.getToken(token => console.log(token))``` queue, and ***Login*** will process that queue item, verifying the ID token, checking to see if the user's email is in the ```adminUsers``` array and adding the ```user.isAdmin``` flag as appropriate. The user details are then updated to ```usersPath/{uid}``` based on the specified ```usersPath``` param.
 
 ***Login*** requires ```{uid}``` to be in the ref path. It's a generic solution, I know, but every app I've written in the last year has used this functionality, written exactly like this.
 
@@ -145,7 +145,7 @@ admin.initializeApp(config.firebase);
 
 const UpdateUser = require('quiver-functions').UpdateUser;
 const updateUser = new UpdateUser({
-  usersPath: 'quiver-functions/users',
+  usersPath: 'quiver-functions/{environment}/users',
   database: admin.database()
 });
 exports.updateUser = functions.auth.user().onCreate(updateUser.getFunction());
@@ -198,6 +198,8 @@ environmentUtility.unsetAll()
 ### Mocks
 
 ***QuiverFunctions.mocks*** is a collection of useful mocks for testing Firebase Functions locally. See the code in ```/mocks``` to see how the objects are built. Check out ```/functions/lib/login.spec.js``` and ```/functions/lib/on-create.spec.js``` for example implementation.
+
+Use ```new functions.database.DeltaSnapshot(...)``` to create mock DeltaSnapshots as documented [here](https://firebase.google.com/docs/functions/unit-testing).
 
 Developing Firebase Functions without a local testing environment is... a mistake. A huge mistake. It's basically impossible to develop effectively with a guess-and-check technique. Every call to ```firebase deploy --only functions``` takes at least a minute, and then the functions can take a while to warm up, so solving bugs by uploading new "fixed" functions can be a huge waste of time. Just write the tests. You'll be happier. Promise.
 

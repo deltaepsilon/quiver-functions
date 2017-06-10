@@ -1,18 +1,8 @@
-module.exports = class MockAuthEvent {
-  constructor(ref, params, value) {
-    if (!ref) {
-      throw 'ref required to initialize MockDBEvent';
-    }
-    if (!value) {
-      throw 'value required to initialize MockDBEvent';
-    }
+const functions = require('firebase-functions');
 
-    this.data = ref;
-    this.data.adminRef = ref;
-    
+module.exports = class MockDBEvent {
+  constructor({ app, adminApp, data, delta, path, params }) {
+    this.data = new functions.database.DeltaSnapshot(app, adminApp, data, delta, path);
     this.params = params;
-
-    this.data.val = () => value;
   }
-
 };

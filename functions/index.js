@@ -15,6 +15,7 @@ const Login = require('./onWrite/login.onWrite');
 const login = new Login({
   usersPath: 'quiver-functions/users',
   adminUsers: ['chris@chrisesplin.com'],
+  auth: admin.auth()
 });
 exports.login = functions.database.ref('quiver-functions/queues/current-user/{uid}').onWrite(login.getFunction());
 

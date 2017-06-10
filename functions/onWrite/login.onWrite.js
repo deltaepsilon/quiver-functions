@@ -1,31 +1,58 @@
+const EventService = require('../services/event.service');
+
 module.exports = class Login {
-  constructor(config) {
-    if (!config.usersPath) {
-      throw 'config.usersPath string missing. Looks like "/users"';
+  constructor({ usersPath, adminUsers, auth }) {
+    if (!usersPath) {
+      throw 'config.usersPath string missing. Looks something like "/{anyWildcard}/users"';
     }
-    if (!config.adminUsers) {
+    if (!adminUsers) {
       throw 'config.adminUsers array missing. Looks like ["chris@chrisesplin.com", "anotherAdmin@chrisesplin.com"]';
     }
-    this.usersPath = config.usersPath;
-    this.adminUsers = config.adminUsers;
+    if (!auth) {
+      throw 'config.auth missing.';
+    }
+    this.usersPath = usersPath;
+    this.adminUsers = adminUsers;
+    this.auth = auth;
+
+    this.eventService = new EventService();
   }
 
   getFunction() {
     return event => {
-      const user = event.data.val();
-      const userRef = event.data.adminRef.root.child(this.usersPath).child(event.params.uid);
+      const payload = event.data.val();
+      if (!payload) return;
 
-      if (!user) return Promise.resolve();
+      const token = payload.token;
+      const user = {
+        lastLogin: Date.now(),
+      };
 
-      user.lastLogin = Date.now();
+      return Promise.resolve()
+        .then(() => {
+          return this.auth.verifyIdToken(token);
+        })
+        .then(token => {
+          const userRef = this.getUserRef({ ref: event.data.adminRef, uid: token.uid, params: event.params });
 
-      if (this.adminUsers.includes(user.email)) {
-        user.isAdmin = true;
-      }
+          user.token = token;
+          if (this.adminUsers.includes(token.email)) {
+            user.isAdmin = true;
+          }
 
-      return userRef.update(user).then(() => {
-        return event.data.ref.remove();
-      });
+          return userRef.update(user);
+        })
+        .then(() => event.data.ref.remove())
+        .then(() => user)
+        .catch(error => {
+          return event.data.ref.update({ error }).then(() => Promise.reject(error));
+        });
     };
   }
+
+  getUserRef({ ref, uid, params }) {
+    let usersPath = this.eventService.getAbsolutePath(this.usersPath, params);
+    return ref.root.child(usersPath).child(uid);
+  }
+
 };
