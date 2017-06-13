@@ -9,8 +9,8 @@
     "install-public": "cd public && bower install",
     "serve": "cd public && polymer serve",
     "deploy": "qvf unset && qvf set && firebase deploy",
-    "deploy:functions": "firebase deploy --only functions",
-    "deploy:hosting": "qvf unset && qvf set && firebase deploy --only hosting",
+    "deploy:functions": "qvf unset && qvf set && firebase deploy --only functions",
+    "deploy:hosting": "firebase deploy --only hosting",
     "deploy:config": "qvf unset && qvf set"
   },
   "main": "index.js",

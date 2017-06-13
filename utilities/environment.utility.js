@@ -36,13 +36,19 @@ module.exports = class EnvironmentUtility {
         const stringified = `${keyPath}=${value ? '"true"' : '"false"'}`;
         console.log(`Boolean forced to string: ${stringified}`);
         paths.push(stringified);
+      } else if (this.isStringNumber(value)) {
+        paths.push(`${keyPath}="${String(value)}"`);
       } else if (typeof value == 'string') {
-        paths.push(`${keyPath}=${value}`);
+        paths.push(`${keyPath}=${String(value)}`);
       } else {
         paths = paths.concat(this.getConfigCommands(value, path.concat(key)));
       }
     }
     return paths;
+  }
+
+  isStringNumber(value) {
+    return String(+value) == value;
   }
 
   getAll() {
@@ -72,6 +78,7 @@ module.exports = class EnvironmentUtility {
   setAll(incomingCommands) {
     const commands = incomingCommands || this.getConfigCommands(this.env);
     const cleanedCommands = this.getCleanCommands(commands);
+    console.log('cleanedCommands', cleanedCommands);
     return firebaseTools.functions.config.set(cleanedCommands, this.firebaseToolsOptions).catch(err => Promise.reject({cleanedCommands, err})).then(() => cleanedCommands);
   }
 
