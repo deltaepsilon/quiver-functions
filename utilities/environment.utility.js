@@ -33,8 +33,9 @@ module.exports = class EnvironmentUtility {
       if (value && typeof value == 'object' && !Object.keys(value).length) {
         paths.push(`${keyPath}=undefined`);
       } else if (typeof value == 'boolean') {
-        console.log(`Boolean forced to string: ${keyPath}=${value ? 'true' : 'false'}`);
-        paths.push(`${keyPath}='${value ? 'true' : 'false'}'`);
+        const stringified = `${keyPath}=${value ? '"true"' : '"false"'}`;
+        console.log(`Boolean forced to string: ${stringified}`);
+        paths.push(stringified);
       } else if (typeof value == 'string') {
         paths.push(`${keyPath}=${value}`);
       } else {
