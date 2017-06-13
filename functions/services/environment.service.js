@@ -4,12 +4,12 @@ module.exports = class EnvironmentService {
     this.public = settings.public || 'public';
   }
 
-  getEnvironment() {
+  get environment() {
     return require('../config.json');
   }
 
   getPublicEnvironment(dirtyHost) {
-    const host = dirtyHost ? dirtyHost.replace(/\./g, ':') : undefined;
+    const host = dirtyHost ? dirtyHost.replace(/\./g, '_') : undefined;
     const config = this.config;
     const computedConfig = { firebase: config.firebase };
 

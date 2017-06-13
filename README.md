@@ -57,7 +57,7 @@ module.exports = {
 
 ### EnvironmentService
 
-***EnvironmentService*** takes environment config and has a utility method called ```getPublicEnvironment(host)``` that will return just the ```.public``` node of your environment as well as complete any overrides based on the ```host``` that you pass in. Note that keys can't have periods in them so we're using ```:``` instead of dots. Here's a quick example:
+***EnvironmentService*** takes environment config and has a utility method called ```getPublicEnvironment(host)``` that will return just the ```.public``` node of your environment as well as complete any overrides based on the ```host``` that you pass in. Note that keys can't have periods in them so we're using ```_``` instead of dots. Here's a quick example:
 
 ```
 "public": {
@@ -71,9 +71,9 @@ module.exports = {
     "a": "localhost: a",
     "b": "localhost: b"
   },
-  "subdomain:domain:tld": {
-    "a": "subdomain:domain:tld: a",
-    "b": "subdomain:domain:tld: b"
+  "subdomain_domain_tld": {
+    "a": "subdomain_domain_tld: a",
+    "b": "subdomain_domain_tld: b"
   }
 }
 ```

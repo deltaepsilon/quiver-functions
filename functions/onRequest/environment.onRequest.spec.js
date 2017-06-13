@@ -75,7 +75,7 @@ describe('Environment', () => {
     });
 
     it('overwrites localhost', () => {
-      req = httpMocks.createRequest({ hostname: 'localhost' });
+      req = httpMocks.createRequest({ headers: { referer: 'http://localhost:8081/login' } });
 
       func(req, res);
       const env = extractEnv(res);
@@ -83,11 +83,11 @@ describe('Environment', () => {
     });
 
     it('overwrites subdomain:domain:tld', () => {
-      req = httpMocks.createRequest({ hostname: 'subdomain.domain.tld' });
+      req = httpMocks.createRequest({ headers: { referer: 'http://subdomain.domain.tld/some-garbage' } });
 
       func(req, res);
       const env = extractEnv(res);
-      expect(env.public.a).toEqual('subdomain:domain:tld: a');
+      expect(env.public.a).toEqual('subdomain.domain.tld: a');
     });
   });
 
@@ -95,7 +95,7 @@ describe('Environment', () => {
     it('sets headers', () => {
       const config = { firebase: 1, public: 2 };
       const headers = {
-        'Cache-Control': 'public, max-age=123'
+        'Cache-Control': 'public, max-age=123',
       };
       const testEnvironment = new Environment({ config, headers });
       func = testEnvironment.getFunction();
