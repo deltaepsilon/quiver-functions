@@ -12,7 +12,7 @@ module.exports = class Environment {
     return (req, res) => {
       const config = this.config;
       const environmentService = new EnvironmentService({ config, public: this.public, shared: this.shared });
-      const publicEnvironment = environmentService.getPublicEnvironment(req.host);
+      const publicEnvironment = environmentService.getPublicEnvironment(req.hostname);
 
       for (let header in this.headers) {
         res.set(header, this.headers[header]);

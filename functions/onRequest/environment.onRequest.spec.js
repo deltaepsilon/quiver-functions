@@ -75,7 +75,7 @@ describe('Environment', () => {
     });
 
     it('overwrites localhost', () => {
-      req = httpMocks.createRequest({ host: 'localhost' });
+      req = httpMocks.createRequest({ hostname: 'localhost' });
 
       func(req, res);
       const env = extractEnv(res);
@@ -83,7 +83,7 @@ describe('Environment', () => {
     });
 
     it('overwrites subdomain:domain:tld', () => {
-      req = httpMocks.createRequest({ host: 'subdomain.domain.tld' });
+      req = httpMocks.createRequest({ hostname: 'subdomain.domain.tld' });
 
       func(req, res);
       const env = extractEnv(res);
