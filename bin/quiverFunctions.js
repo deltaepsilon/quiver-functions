@@ -6,6 +6,14 @@ const env = require(`${cwd}/${argv.environment || 'functions/config.json'}`);
 const EnvironmentUtility = require('../utilities/utilities').EnvironmentUtility;
 const environmentUtility = new EnvironmentUtility(env.config.project, env.config.token, env);
 
+const admin = require('firebase-admin');
+admin.initializeApp({
+  databaseURL: env.firebase.databaseURL,
+  credential: admin.credential.cert(env.firebase.serviceAccount),
+});
+const GeneratorUtility = require('../utilities/generator.utility');
+const generatorUtility = new GeneratorUtility({ admin });
+
 if (argv._.includes('get')) {
   console.log('getting all');
   environmentUtility.getAll().then(config => console.log(config));
@@ -15,6 +23,14 @@ if (argv._.includes('get')) {
 } else if (argv._.includes('unset')) {
   console.log('unsetting all');
   handlePromise(environmentUtility.unsetAll());
+} else if (argv._.includes('generate')) {
+  console.log('generating');
+  const data = generatorUtility.generate(10, 5);
+  admin.database().ref('generated/connections').set(data)
+    .then(() => {
+      console.log('done');
+      process.exit();
+    });
 }
 
 function handlePromise(promise) {

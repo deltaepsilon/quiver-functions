@@ -86,4 +86,34 @@ describe('Login', function() {
     });
   });
 
+  describe('admin', () => {
+    let event, spy, token;
+    beforeEach(() => {
+      event = new mocks.MockDBEvent({app, adminApp: app, delta: {token: 123}});
+      spy = jasmine.createSpy('spy');
+      token = { uid: 1, email: mocks.mockUser.email };
+      spyOn(login, 'getUserRef').and.returnValue({ update: spy });
+      spyOn(login.auth, 'verifyIdToken').and.returnValue(Promise.resolve(token));
+    });
+
+    it('should set isAdmin: true when email matches', done => {
+      func(event)
+        .then(payload => {
+          expect(payload.isAdmin).toEqual(true);
+          done();
+        })
+        .catch(done.fail);
+    });
+    
+    it('should set isAdmin: false when email does not match', done => {
+      token.email = 'another-email';
+      func(event)
+        .then(payload => {
+          expect(payload.isAdmin).toEqual(null);
+          done();
+        })
+        .catch(done.fail);
+    });
+  });
+
 });

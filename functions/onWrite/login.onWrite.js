@@ -26,6 +26,7 @@ module.exports = class Login {
       const token = payload.token;
       const user = {
         lastLogin: Date.now(),
+        isAdmin: null
       };
 
       return Promise.resolve()

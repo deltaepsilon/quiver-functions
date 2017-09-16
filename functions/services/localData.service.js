@@ -1,0 +1,85 @@
+const Rx = require('rxjs/Rx');
+
+module.exports = class LocalDataService {
+  constructor({ ref }) {
+    this.ref = ref;
+    this.data = {};
+    this.handlers = {};
+  }
+
+  listen() {
+    return Rx.Observable.create(observer => {
+      this.observer = observer;
+      this.getLastKey().then(lastKey => {
+        this.handlers.childAdded = this.listenToChildAdded(observer, lastKey);
+        this.handlers.childChanged = this.listenToChildChanged(observer);
+        this.handlers.childRemoved = this.listenToChildRemoved(observer);
+      });
+    });
+  }
+
+  unlisten() {
+    this.ref.off('child_added', this.handlers.childAdded);
+    this.ref.off('child_changed', this.handlers.childChanged);
+    this.ref.off('child_removed', this.handlers.childRemoved);
+  }
+
+  getLastKey() {
+    return this.ref
+      .limitToLast(1)
+      .once('child_added')
+      .then(snap => snap.key);
+  }
+
+  listenToChildAdded(observer, lastKey) {
+    let ready = false;
+
+    return this.ref.on('child_added', snap => {
+      const key = snap.key;
+      const value = snap.val();
+
+      this.data[key] = value;
+
+      observer.next({
+        event: 'child_added',
+        key,
+        value,
+      });
+
+      if (!ready && key == lastKey) {
+        this.ready = true;
+        observer.next({ event: 'ready', key });
+      }
+    });
+  }
+
+  listenToChildChanged(observer) {
+    return this.ref.on('child_changed', snap => {
+      const key = snap.key;
+      const value = snap.val();
+
+      this.data[key] = value;
+
+      observer.next({
+        event: 'child_changed',
+        key,
+        value,
+      });
+    });
+  }
+
+  listenToChildRemoved(observer) {
+    return this.ref.on('child_removed', snap => {
+      const key = snap.key;
+      const value = snap.val();
+
+      delete this.data[snap.key];
+
+      observer.next({
+        event: 'child_removed',
+        key,
+        value,
+      });
+    });
+  }
+};
