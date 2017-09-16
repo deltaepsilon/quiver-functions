@@ -58,6 +58,17 @@ describe('GraphQLServer', () => {
     });
   });
 
+  it('logging', done => {
+    start().then(observable => {
+      observable.filter(x => !!x.log).subscribe(log => {
+        expect(!!log.log).toEqual(true);
+        done();
+      });
+      request(server.app)
+        .get('/graphql?query={items{i,key,connections{i}}}')
+        .end((err, res) => {});
+    });
+  });
 
   function start() {
     return new Promise(resolve => {

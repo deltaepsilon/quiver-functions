@@ -15,10 +15,26 @@ const Login = require('./onWrite/login.onWrite');
 const login = new Login({
   usersPath: 'quiver-functions/users',
   adminUsers: ['chris@chrisesplin.com'],
-  auth: admin.auth()
+  auth: admin.auth(),
 });
-exports.login = functions.database.ref('quiver-functions/queues/current-user/{uid}').onWrite(login.getFunction());
+exports.login = functions.database
+  .ref('quiver-functions/queues/current-user/{uid}')
+  .onWrite(login.getFunction());
 
 const Environment = require('./onRequest/environment.onRequest');
 const environment = new Environment({ config });
 exports.environment = functions.https.onRequest(environment.getFunction());
+
+const GraphQLServer = require('./onRequest/graphqlServer.onRequest');
+const schema = require('./schemas/items.schema');
+const connectionsRef = admin.database().ref('generated/connections');
+const graphqlServer = new GraphQLServer({ ref: connectionsRef });
+const graphqlObservable = graphqlServer.start(schema);
+
+graphqlObservable.filter(x => x.event == 'ready')
+  .subscribe(x => {
+    console.log(`GraphQLServer is ready. Last key: ${x.key}`);
+  });
+graphqlObservable.filter(x => !!x.log).subscribe(x => console.log(x.log));
+
+exports.graphql = functions.https.onRequest(graphqlServer.app);
