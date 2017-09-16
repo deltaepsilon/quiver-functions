@@ -12,11 +12,10 @@ const schemaPrinter = require('graphql/utilities/schemaPrinter');
 const printSchema = schemaPrinter.printSchema;
 
 module.exports = class GraphQLServer {
-  constructor({ ref, logger }) {
+  constructor({ ref }) {
     this.ref = ref;
     this.localDataService = new LocalDataService({ ref });
     this.app = express();
-    this.logger = logger;
   }
 
   start(generateSchema) {
@@ -29,7 +28,7 @@ module.exports = class GraphQLServer {
       observer.next({ event: 'listening' });
     });
 
-    const morganLogger = (req, res, next) => {
+    const logger = (req, res, next) => {
       const stream = {
         write: log => {
           if (observer) {
@@ -40,13 +39,8 @@ module.exports = class GraphQLServer {
       morgan('tiny', { stream })(req, res, next);
     };
 
-    const middleware = [morganLogger, bodyParser.json()];
 
-    if (this.logger) {
-      middleware.unshift(this.logger);
-    }
-
-    this.app.use('/graphql', middleware, graphqlExpress({ schema, context: {} }));
+    this.app.use('/graphql', [logger, bodyParser.json()], graphqlExpress({ schema, context: {} }));
     this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
     this.app.use('/schema', this.printSchema(schema));
 
