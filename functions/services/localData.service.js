@@ -86,7 +86,7 @@ module.exports = class LocalDataService {
 
   set(key, value) {
     if (typeof this.transform == 'function') {
-      value = this.transform({ value, data: this.data });
+      value = this.transform({ key, value, data: this.data });
     }
     this.data.set(key, value);
   }
