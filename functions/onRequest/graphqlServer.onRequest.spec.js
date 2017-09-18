@@ -24,10 +24,11 @@ describe('GraphQLServer', () => {
     const generator = require('../schemas/items.schema');
 
     schema = () => {
-      return generator({
-        one: { i: 1, connections: { two: true } },
-        two: { i: 2, connections: { one: true } },
-      });
+      const map = new Map([
+        ['one', { i: 1, connections: { two: true } }],
+        ['two', { i: 2, connections: { one: true } }],
+      ]);
+      return generator(map);
     };
     server = new GraphQLServer({ ref });
     req = httpMocks.createRequest();
@@ -60,7 +61,7 @@ describe('GraphQLServer', () => {
 
   it('logging', done => {
     start().then(observable => {
-      observable.filter(x => !!x.log).subscribe(log => {
+      observable.filter(x => !!x.log).take(1).subscribe(log => {
         expect(!!log.log).toEqual(true);
         done();
       });
@@ -74,7 +75,7 @@ describe('GraphQLServer', () => {
     return new Promise(resolve => {
       const observable = server.start(schema);
 
-      observable.filter(x => x.event == 'listening').subscribe(() => {
+      observable.filter(x => x.event == 'listening').take(1).subscribe(() => {
         resolve(observable);
       });
     });

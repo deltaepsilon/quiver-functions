@@ -32,6 +32,7 @@ const graphqlServer = new GraphQLServer({ ref: connectionsRef });
 const graphqlObservable = graphqlServer.start(schema);
 
 graphqlObservable.filter(x => x.event == 'ready')
+  .take(1)
   .subscribe(x => {
     console.log(`GraphQLServer is ready. Last key: ${x.key}`);
   });

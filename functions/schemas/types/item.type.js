@@ -12,7 +12,7 @@ module.exports = data => {
         type: new GraphQLList(ItemType),
         resolve: item => {
           return Object.keys(item.connections).reduce((items, key) => {
-            const item = data[key];
+            const item = data.get(key);
             item.key = key;
             items.push(item);
             return items;

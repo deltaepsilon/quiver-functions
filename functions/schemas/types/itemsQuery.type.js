@@ -11,12 +11,10 @@ module.exports = data => {
         type: new GraphQLList(ItemType),
         resolve: root => {
           const result = [];
-
-          for (let key in data) {
-            let item = data[key];
+          data.forEach((item, key) => {
             item.key = key;
             result.push(item);
-          }
+          });
           return result;
         },
       },
@@ -26,7 +24,7 @@ module.exports = data => {
           key: { type: GraphQLString },
         },
         resolve: (root, args) => {
-          return data[args.key];
+          return data.get(args.key);
         },
       },
     }),

@@ -25,7 +25,7 @@ if (argv._.includes('get')) {
   handlePromise(environmentUtility.unsetAll());
 } else if (argv._.includes('generate')) {
   console.log('generating');
-  const data = generatorUtility.generate(10, 5);
+  const data = generatorUtility.generate(10, 3);
   admin.database().ref('generated/connections').set(data)
     .then(() => {
       console.log('done');

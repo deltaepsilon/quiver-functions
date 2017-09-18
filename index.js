@@ -4,6 +4,6 @@ module.exports = {
   Environment: require('./functions/onRequest/environment.onRequest'),
   GraphQLServer: require('./functions/onRequest/graphqlServer.onRequest'),
   mocks: require('./mocks/mocks'),
-  services: require('./services/services'),
+  services: require('./functions/services'),
   utilities: require('./utilities/utilities')
 }

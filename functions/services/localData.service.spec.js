@@ -26,13 +26,15 @@ describe('GraphQLServer', () => {
     service
       .listen()
       .filter(x => x.event == 'ready')
+      .take(1)
       .subscribe(e => {
-        const keys = Object.keys(service.data);
-        const totalConnections = keys.reduce((count, key) => {
-          return count + Object.keys(service.data[key].connections).length;
-        }, 0);
+        let totalConnections = 0;
 
-        expect(keys.length).toEqual(itemsCount);
+        service.data.forEach(item => {
+          totalConnections += Object.keys(item.connections).length;
+        });
+
+        expect(service.data.size).toEqual(itemsCount);
         expect(totalConnections).toEqual(itemsCount * connectionsCount);
         done();
       });
@@ -41,12 +43,12 @@ describe('GraphQLServer', () => {
   it('child_changed', done => {
     const observable = service.listen();
 
-    observable.filter(x => x.event == 'child_changed').subscribe(e => {
+    observable.filter(x => x.event == 'child_changed').take(1).subscribe(e => {
       expect(e.value.changed).toEqual(true);
       done();
     });
 
-    observable.filter(x => x.event == 'ready').subscribe(e => {
+    observable.filter(x => x.event == 'ready').take(1).subscribe(e => {
       ref.child(e.key).update({ changed: true });
     });
   });
@@ -55,12 +57,12 @@ describe('GraphQLServer', () => {
     const observable = service.listen();
     let lastKey;
 
-    observable.filter(x => x.event == 'child_removed').subscribe(e => {
+    observable.filter(x => x.event == 'child_removed').take(1).subscribe(e => {
       expect(e.key).toEqual(lastKey);
       done();
     });
 
-    observable.filter(x => x.event == 'ready').subscribe(e => {
+    observable.filter(x => x.event == 'ready').take(1).subscribe(e => {
       lastKey = e.key;
       ref.child(e.key).remove();
     });

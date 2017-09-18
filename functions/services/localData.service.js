@@ -3,7 +3,7 @@ const Rx = require('rxjs/Rx');
 module.exports = class LocalDataService {
   constructor({ ref }) {
     this.ref = ref;
-    this.data = {};
+    this.data = new Map();
     this.handlers = {};
   }
 
@@ -38,7 +38,7 @@ module.exports = class LocalDataService {
       const key = snap.key;
       const value = snap.val();
 
-      this.data[key] = value;
+      this.data.set(key, value);
 
       observer.next({
         event: 'child_added',
@@ -58,7 +58,7 @@ module.exports = class LocalDataService {
       const key = snap.key;
       const value = snap.val();
 
-      this.data[key] = value;
+      this.data.set(key, value);
 
       observer.next({
         event: 'child_changed',
@@ -73,7 +73,7 @@ module.exports = class LocalDataService {
       const key = snap.key;
       const value = snap.val();
 
-      delete this.data[snap.key];
+      this.data.delete(key);
 
       observer.next({
         event: 'child_removed',

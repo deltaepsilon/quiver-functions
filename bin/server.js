@@ -1,6 +1,6 @@
-const GraphQLServer = require('./functions/onRequest/graphqlServer.onRequest');
+const GraphQLServer = require('../functions/onRequest/graphqlServer.onRequest');
 const admin = require('firebase-admin');
-const config = require('./functions/config.json');
+const config = require('../functions/config.json');
 const graphql = require('graphql');
 const makeExecutableSchema = require('graphql-tools').makeExecutableSchema;
 
@@ -9,7 +9,7 @@ admin.initializeApp({
   credential: admin.credential.cert(config.firebase.serviceAccount),
 });
 
-const schema = require('./functions/schemas/items.schema');
+const schema = require('../functions/schemas/items.schema');
 
 const ref = admin.database().ref('test/graphqlServer');
 const server = new GraphQLServer({ ref });
