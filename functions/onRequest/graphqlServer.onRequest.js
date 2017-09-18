@@ -12,9 +12,9 @@ const schemaPrinter = require('graphql/utilities/schemaPrinter');
 const printSchema = schemaPrinter.printSchema;
 
 module.exports = class GraphQLServer {
-  constructor({ ref }) {
+  constructor({ ref, transform }) {
     this.ref = ref;
-    this.localDataService = new LocalDataService({ ref });
+    this.localDataService = new LocalDataService({ ref, transform });
     this.app = express();
   }
 

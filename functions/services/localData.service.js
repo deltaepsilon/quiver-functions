@@ -1,10 +1,11 @@
 const Rx = require('rxjs/Rx');
 
 module.exports = class LocalDataService {
-  constructor({ ref }) {
+  constructor({ ref, transform }) {
     this.ref = ref;
     this.data = new Map();
     this.handlers = {};
+    this.transform = transform;
   }
 
   listen() {
@@ -38,7 +39,7 @@ module.exports = class LocalDataService {
       const key = snap.key;
       const value = snap.val();
 
-      this.data.set(key, value);
+      this.set(key, value);
 
       observer.next({
         event: 'child_added',
@@ -58,7 +59,7 @@ module.exports = class LocalDataService {
       const key = snap.key;
       const value = snap.val();
 
-      this.data.set(key, value);
+      this.set(key, value);
 
       observer.next({
         event: 'child_changed',
@@ -81,5 +82,12 @@ module.exports = class LocalDataService {
         value,
       });
     });
+  }
+
+  set(key, value) {
+    if (typeof this.transform == 'function') {
+      value = this.transform({ value, data: this.data });
+    }
+    this.data.set(key, value);
   }
 };
