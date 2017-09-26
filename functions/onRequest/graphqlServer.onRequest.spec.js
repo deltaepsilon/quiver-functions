@@ -61,12 +61,34 @@ describe('GraphQLServer', () => {
 
   it('logging', done => {
     start().then(observable => {
-      observable.filter(x => !!x.log).take(1).subscribe(log => {
-        expect(!!log.log).toEqual(true);
-        done();
-      });
+      observable
+        .filter(x => !!x.log)
+        .take(1)
+        .subscribe(log => {
+          expect(!!log.log).toEqual(true);
+          done();
+        });
       request(server.app)
         .get('/graphql?query={items{i,key,connections{i}}}')
+        .end((err, res) => {});
+    });
+  });
+
+  describe('async middleware with a subject', () => {
+    const generator = require('../schemas/async.schema');
+    let observable;
+    beforeEach(() => {
+      observable = server.listen(generator);
+    });
+
+    it('should enable observables to fire', done => {
+      observable
+        .filter(x => x == 'async finished')
+        .take(1)
+        .subscribe(x => done());
+
+      request(server.app)
+        .get('/graphql?query={async}')
         .end((err, res) => {});
     });
   });
@@ -74,10 +96,12 @@ describe('GraphQLServer', () => {
   function start() {
     return new Promise(resolve => {
       const observable = server.start(schema);
-
-      observable.filter(x => x.event == 'listening').take(1).subscribe(() => {
-        resolve(observable);
-      });
+      observable
+        .filter(x => x.event == 'ready')
+        .take(1)
+        .subscribe(() => {
+          resolve(observable);
+        });
     });
   }
 });

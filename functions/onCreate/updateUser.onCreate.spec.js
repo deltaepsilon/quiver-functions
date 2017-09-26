@@ -17,7 +17,7 @@ describe('Login', function() {
   const userRef = usersRef.child(mocks.mockUser.uid);
 
   function cleanUp(done) {
-    return Promise.all([usersRef.remove()]).then(done);
+    return Promise.all([usersRef.remove()]).then(() => done());
   }
 
   beforeEach(cleanUp);

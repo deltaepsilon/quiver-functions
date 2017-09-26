@@ -12,39 +12,44 @@ const schemaPrinter = require('graphql/utilities/schemaPrinter');
 const printSchema = schemaPrinter.printSchema;
 
 module.exports = class GraphQLServer {
-  constructor({ ref, transform }) {
-    this.ref = ref;
-    this.localDataService = new LocalDataService({ ref, transform });
+  constructor({ ref, transform } = {}) {
+    if (ref) {
+      this.ref = ref;
+      this.localDataService = new LocalDataService({ ref, transform });
+    }
     this.app = express();
   }
 
   start(generateSchema) {
     const data = this.localDataService.data;
     const schema = generateSchema(data);
-    let observer;
+    const observable = this.listen(schema);
 
-    const observable = Rx.Observable.create(x => {
-      observer = x;
-      observer.next({ event: 'listening' });
-    });
+    return this.localDataService.listen().merge(observable);
+  }
 
-    const logger = (req, res, next) => {
+  listen(generatorOrSchema) {
+    const subject = new Rx.Subject();
+    const isGenerator = typeof generatorOrSchema == 'function';
+    const schema = isGenerator ? generatorOrSchema({ subject }) : generatorOrSchema;
+    
+    const logger = this.getLogger(subject);
+    
+    this.app.use('/graphql', [logger, bodyParser.json()], graphqlExpress({ schema, context: {} }));
+    this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+    this.app.use('/schema', this.printSchema(schema));
+    return subject;
+  }
+
+  getLogger(subject) {
+    return (req, res, next) => {
       const stream = {
         write: log => {
-          if (observer) {
-            observer.next({ log });
-          }
+          subject.next({ log });
         },
       };
       morgan('tiny', { stream })(req, res, next);
     };
-
-
-    this.app.use('/graphql', [logger, bodyParser.json()], graphqlExpress({ schema, context: {} }));
-    this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
-    this.app.use('/schema', this.printSchema(schema));
-
-    return this.localDataService.listen().merge(observable);
   }
 
   printSchema(schema) {

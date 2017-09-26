@@ -13,7 +13,7 @@ describe('Login', function() {
 
   const db = admin.database();
 
-  const usersPath = 'quiver-functions/{environment}/users';
+  const usersPath = 'quiver-functions/test/users';
   const usersRef = db.ref(usersPath);
   const uid = 'fake-uid';
   const userRef = usersRef.child(uid);
@@ -22,7 +22,7 @@ describe('Login', function() {
   const loginQueueRef = db.ref(loginQueuePath);
 
   function cleanUp(done) {
-    return Promise.all([usersRef.remove(), loginQueueRef.remove()]).then(done);
+    return Promise.all([usersRef.remove(), loginQueueRef.remove()]).then(() => done(), done.fail);
   }
 
   beforeEach(cleanUp);
@@ -39,7 +39,13 @@ describe('Login', function() {
     app = admin.app();
   });
 
-  // afterEach(cleanUp);
+  afterEach(cleanUp);
+
+  describe('test', () => {
+    it('should work', () => {
+      expect(true).toEqual(true);
+    });
+  });
 
   describe('getFunction', () => {
     it('should handle a verification failure', done => {
@@ -104,7 +110,7 @@ describe('Login', function() {
         })
         .catch(done.fail);
     });
-    
+
     it('should set isAdmin: false when email does not match', done => {
       token.email = 'another-email';
       func(event)
@@ -115,5 +121,4 @@ describe('Login', function() {
         .catch(done.fail);
     });
   });
-
 });
