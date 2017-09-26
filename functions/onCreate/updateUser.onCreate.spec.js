@@ -7,7 +7,7 @@ describe('Login', function() {
     databaseURL: config.firebase.databaseURL
   });
 
-  const mocks = require('../../mocks/mocks');
+  const mocks = require('../../mocks');
   const UpdateUser = require('./updateUser.onCreate');
 
   const database = admin.database();

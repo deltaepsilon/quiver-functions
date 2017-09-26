@@ -3,7 +3,7 @@ const _ = require('lodash');
 describe('EnvironmentUtility', function() {
   const config = require('../functions/config.json');
 
-  const utilities = require('./utilities');
+  const utilities = require('./');
   const environmentUtility = new utilities.EnvironmentUtility(config.config.project, config.config.token, config);
 
   describe('getConfigCommands', () => {

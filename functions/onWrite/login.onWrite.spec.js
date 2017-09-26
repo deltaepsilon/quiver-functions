@@ -8,7 +8,7 @@ describe('Login', function() {
     databaseURL: config.firebase.databaseURL,
   });
 
-  const mocks = require('../../mocks/mocks');
+  const mocks = require('../../mocks');
   const Login = require('./login.onWrite');
 
   const db = admin.database();
