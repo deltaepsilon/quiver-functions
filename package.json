@@ -1,6 +1,6 @@
 {
   "name": "quiver-functions",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "A monorepo of useful Firebase Cloud Functions",
   "scripts": {
     "test": "jest --config=jest.config.json --env=node",
