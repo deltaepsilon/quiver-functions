@@ -30,6 +30,17 @@ describe('EnvironmentService', () => {
       expect(service.getPublicEnvironment('localhost')).toEqual(expected);
     });
 
+    it('should resolve not localhost:8080 without ignorePort', () => {
+      const environment = service.getPublicEnvironment('localhost:8080');
+      expect(environment.public.a).toEqual('defaults: a');
+    });
+    
+    it('should resolve localhost:8080 when ignorePort is set', () => {
+      service.ignorePort = true;
+      const environment = service.getPublicEnvironment('localhost:8080');
+      expect(environment.public.a).toEqual('localhost: a');
+    });
+
     it('should resolve subdomain_domain_tld', () => {
       const expected = {
         firebase: {

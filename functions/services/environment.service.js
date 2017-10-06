@@ -1,7 +1,8 @@
 module.exports = class EnvironmentService {
-  constructor(settings = {}) {
-    this.config = settings.config;
-    this.public = settings.public || 'public';
+  constructor({config, publicPath = 'public', ignorePort}) {
+    this.config = config;
+    this.publicPath = publicPath;
+    this.ignorePort = ignorePort;
   }
 
   get environment() {
@@ -9,7 +10,7 @@ module.exports = class EnvironmentService {
   }
 
   getPublicEnvironment(dirtyHost) {
-    const host = dirtyHost ? dirtyHost.replace(/\./g, '_') : undefined;
+    const host = this.getHost(dirtyHost);
     const config = this.config;
     const computedConfig = { firebase: config.firebase };
 
@@ -18,15 +19,26 @@ module.exports = class EnvironmentService {
 
     const publicEnvironment = {
       firebase: config.firebase,
-      [this.public]: config[this.public],
+      [this.publicPath]: Object.assign({}, config[this.publicPath]),
     };
 
-    if (publicEnvironment[this.public] && publicEnvironment[this.public][host]) {
-      let overrides = publicEnvironment[this.public][host];
+    if (publicEnvironment[this.publicPath] && publicEnvironment[this.publicPath][host]) {
+      let overrides = publicEnvironment[this.publicPath][host];
       for (let key in overrides) {
-        publicEnvironment[this.public][key] = publicEnvironment[this.public][host][key];
+        publicEnvironment[this.publicPath][key] = publicEnvironment[this.publicPath][host][key];
       }
     }
     return publicEnvironment;
+  }
+
+  getHost(host) {
+    if (host) {
+      host = host.replace(/\./g, '_');
+
+      if (this.ignorePort) {
+        host = host.replace(/:\d+/, '');
+      }
+    }
+    return host;
   }
 };

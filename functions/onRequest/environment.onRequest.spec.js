@@ -19,7 +19,7 @@ describe('Environment', () => {
   });
 
   it('should allow overriding config', () => {
-    const config = { firebase: 1, public: 2 };
+    const config = { firebase: 1, public: { test: 2 } };
     const testEnvironment = new Environment({ config });
     func = testEnvironment.getFunction();
 
@@ -53,7 +53,11 @@ describe('Environment', () => {
 
     describe('Alternate paths', () => {
       beforeEach(() => {
-        const testEnvironment = new Environment({ config, public: 'test_public', shared: 'test_shared' });
+        const testEnvironment = new Environment({
+          config,
+          publicPath: 'test_public',
+          shared: 'test_shared',
+        });
         func = testEnvironment.getFunction();
       });
 
@@ -83,7 +87,9 @@ describe('Environment', () => {
     });
 
     it('overwrites subdomain:domain:tld', () => {
-      req = httpMocks.createRequest({ headers: { referer: 'http://subdomain.domain.tld/some-garbage' } });
+      req = httpMocks.createRequest({
+        headers: { referer: 'http://subdomain.domain.tld/some-garbage' },
+      });
 
       func(req, res);
       const env = extractEnv(res);
