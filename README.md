@@ -153,7 +153,8 @@ exports.updateUser = functions.auth.user().onCreate(updateUser.getFunction());
 const Login = require('quiver-functions').Login;
 const login = new Login({
   usersPath: 'quiver-functions/users',
-  adminUsers: ['chris@chrisesplin.com']
+  adminUsers: ['chris@chrisesplin.com'],
+  auth: admin.auth()
 });
 exports.login = functions.database.ref('quiver-functions/queues/current-user/{uid}').onWrite(login.getFunction());
 
